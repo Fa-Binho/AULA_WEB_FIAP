@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo dos Palitinhos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Jogo dos Palitinhos</h1>
+        <p class="subtitle">Escolha seus palitos (0-3) e tente adivinhar o total!</p>
+        
+        <div class="game-area">
+            <div class="players">
+                <div class="player-box">
+                    <div class="player-name">👤 VOCÊ</div>
+                    <div class="palitos-display" id="palitosJogador">❓</div>
+                    <div class="controls">
+                        <p><strong>Escolha seus palitos:</strong></p>
+                        <div class="palitos-buttons">
+                            <button class="palito-btn" onclick="escolherPalitos(0)">0</button>
+                            <button class="palito-btn" onclick="escolherPalitos(1)">1</button>
+                            <button class="palito-btn" onclick="escolherPalitos(2)">2</button>
+                            <button class="palito-btn" onclick="escolherPalitos(3)">3</button>
+                        </div>
+                        <div class="aposta-section">
+                            <p><strong>Sua aposta para o total:</strong></p>
+                            <div class="aposta-buttons">
+                                <button class="aposta-btn" onclick="apostar(0)">0</button>
+                                <button class="aposta-btn" onclick="apostar(1)">1</button>
+                                <button class="aposta-btn" onclick="apostar(2)">2</button>
+                                <button class="aposta-btn" onclick="apostar(3)">3</button>
+                                <button class="aposta-btn" onclick="apostar(4)">4</button>
+                                <button class="aposta-btn" onclick="apostar(5)">5</button>
+                                <button class="aposta-btn" onclick="apostar(6)">6</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="player-box">
+                    <div class="player-name">🤖 COMPUTADOR</div>
+                    <div class="palitos-display" id="palitosComputador">❓</div>
+                    <div class="controls">
+                        <p><strong>Palitos escolhidos:</strong> <span id="palitosCompEscolhidos">?</span></p>
+                        <p><strong>Aposta do computador:</strong> <span id="apostaComputador">?</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="jogar-btn" id="jogarBtn" onclick="jogar()" disabled>
+                🎮 JOGAR!
+            </button>
+            
+            <div class="resultado" id="resultado">
+                Escolha seus palitos e faça sua aposta para começar!
+            </div>
+            
+            <div class="placar">
+                <div class="placar-item">
+                    <strong>Você:</strong> <span id="pontosJogador">0</span>
+                </div>
+                <div class="placar-item">
+                    <strong>Computador:</strong> <span id="pontosComputador">0</span>
+                </div>
+            </div>
+            
+            <button class="reset-btn" onclick="resetarJogo()">🔄 Novo Jogo</button>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis do jogo - conceito de VARIÁVEIS em JavaScript
+        let palitosJogador = null;      // Palitos escolhidos pelo jogador
+        let apostaJogador = null;       // Aposta do jogador para o total
+        let palitosComputador = null;   // Palitos do computador
+        let apostaComputador = null;    // Aposta do computador
+        let pontosJogador = 0;          // Pontuação do jogador
+        let pontosComputador = 0;       // Pontuação do computador
+        
+        // FUNÇÃO para escolher palitos - conceito de FUNÇÕES
+        function escolherPalitos(quantidade) {
+            palitosJogador = quantidade;
+            
+            // Atualizar visual dos botões - conceito de MANIPULAÇÃO DO DOM
+            const botoes = document.querySelectorAll('.palito-btn');
+            botoes.forEach(btn => btn.classList.remove('selected'));
+            botoes[quantidade].classList.add('selected');
+            
+            // Mostrar palitos visualmente com emojis
+            const emojis = ['✊', '👆', '✌️', '🤟'];
+            document.getElementById('palitosJogador').textContent = emojis[quantidade];
+            
+            verificarSePodeJogar();
+        }
+        
+        // FUNÇÃO para fazer aposta - mais prática com funções
+        function apostar(valor) {
+            apostaJogador = valor;
+            
+            // Atualizar visual dos botões de aposta
+            const botoes = document.querySelectorAll('.aposta-btn');
+            botoes.forEach(btn => btn.classList.remove('selected'));
+            botoes[valor].classList.add('selected');
+            
+            verificarSePodeJogar();
+        }
+        
+        // FUNÇÃO para verificar se pode jogar - conceito de CONDICIONAIS
+        function verificarSePodeJogar() {
+            const jogarBtn = document.getElementById('jogarBtn');
+            
+            // CONDICIONAL IF - só habilita o botão se ambas escolhas foram feitas
+            if (palitosJogador !== null && apostaJogador !== null) {
+                jogarBtn.disabled = false;
+                jogarBtn.textContent = '🎮 JOGAR!';
+            } else {
+                jogarBtn.disabled = true;
+                jogarBtn.textContent = '⏳ Escolha palitos e aposta';
+            }
+        }
+        
+        // FUNÇÃO principal do jogo
+        function jogar() {
+            // Computador faz suas escolhas aleatoriamente - conceito de NÚMEROS ALEATÓRIOS
+            palitosComputador = Math.floor(Math.random() * 4); // 0 a 3
+            apostaComputador = Math.floor(Math.random() * 7);  // 0 a 6
+            
+            // Mostrar escolhas do computador
+            const emojis = ['✊', '👆', '✌️', '🤟'];
+            document.getElementById('palitosComputador').textContent = emojis[palitosComputador];
+            document.getElementById('palitosCompEscolhidos').textContent = palitosComputador;
+            document.getElementById('apostaComputador').textContent = apostaComputador;
+            
+            // Calcular total de palitos
+            const totalPalitos = palitosJogador + palitosComputador;
+            
+            // Verificar quem ganhou - conceito de LÓGICA CONDICIONAL
+            let resultado = '';
+            let jogadorAcertou = (apostaJogador === totalPalitos);
+            let computadorAcertou = (apostaComputador === totalPalitos);
+            
+            // ESTRUTURA CONDICIONAL COMPLEXA (if/else if/else)
+            if (jogadorAcertou && computadorAcertou) {
+                resultado = `🤝 EMPATE! Ambos acertaram o total: ${totalPalitos}`;
+            } else if (jogadorAcertou) {
+                resultado = `🎉 VOCÊ GANHOU! Total: ${totalPalitos}. Sua aposta: ${apostaJogador} ✅`;
+                pontosJogador++;
+            } else if (computadorAcertou) {
+                resultado = `🤖 COMPUTADOR GANHOU! Total: ${totalPalitos}. Aposta do computador: ${apostaComputador} ✅`;
+                pontosComputador++;
+            } else {
+                resultado = `😅 NINGUÉM ACERTOU! Total: ${totalPalitos}. Você apostou: ${apostaJogador}, Computador: ${apostaComputador}`;
+            }
+            
+            // Mostrar resultado
+            document.getElementById('resultado').innerHTML = resultado;
+            
+            // Atualizar placar
+            document.getElementById('pontosJogador').textContent = pontosJogador;
+            document.getElementById('pontosComputador').textContent = pontosComputador;
+            
+            // Resetar para próxima rodada
+            setTimeout(() => {
+                resetarRodada();
+            }, 3000); // Aguarda 3 segundos antes de resetar
+        }
+        
+        // FUNÇÃO para resetar rodada
+        function resetarRodada() {
+            // Resetar variáveis
+            palitosJogador = null;
+            apostaJogador = null;
+            palitosComputador = null;
+            apostaComputador = null;
+            
+            // Resetar visual
+            document.getElementById('palitosJogador').textContent = '❓';
+            document.getElementById('palitosComputador').textContent = '❓';
+            document.getElementById('palitosCompEscolhidos').textContent = '?';
+            document.getElementById('apostaComputador').textContent = '?';
+            document.getElementById('resultado').textContent = 'Escolha seus palitos e faça sua aposta para a próxima rodada!';
+            
+            // Remover seleções
+            document.querySelectorAll('.palito-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelectorAll('.aposta-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            verificarSePodeJogar();
+        }
+        
+        // FUNÇÃO para resetar jogo completo
+        function resetarJogo() {
+            pontosJogador = 0;
+            pontosComputador = 0;
+            document.getElementById('pontosJogador').textContent = '0';
+            document.getElementById('pontosComputador').textContent = '0';
+            resetarRodada();
+        }
+        
+        // Inicializar o jogo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Jogo dos Palitinhos carregado!');
+            console.log('📚 Conceitos JavaScript demonstrados:');
+            console.log('   • Variáveis (let, const)');
+            console.log('   • Funções (function)');
+            console.log('   • Condicionais (if/else)');
+            console.log('   • Manipulação do DOM');
+            console.log('   • Eventos (onclick)');
+            console.log('   • Números aleatórios (Math.random)');
+            console.log('   • Arrays e objetos');
+        });
+    </script>
+</body>
+</html>
